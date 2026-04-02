@@ -1,66 +1,75 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import RatingStars from './RatingStars';
 
 import type { TripData } from '@/types/trip';
 
 export interface TripCardProps extends TripData {
-  onDelete?: () => void;
+  onRemove?: () => void;
 }
 
-export default function TripCard({ title, destination, date, rating, onDelete }: TripCardProps) {
+export default function TripCard({
+  title,
+  destination,
+  date,
+  rating,
+  onRemove,
+}: TripCardProps) {
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
-        {onDelete && (
-          <Pressable onPress={onDelete} style={styles.deleteButton}>
-            <Text style={styles.deleteText}>X</Text>
+    <View style={styles.container}>
+      <View style={styles.topRow}>
+        <Text style={styles.tripTitle}>{title}</Text>
+
+        {onRemove && (
+          <Pressable onPress={onRemove} style={styles.removeBtn}>
+            <Text style={styles.removeText}>✕</Text> 
           </Pressable>
         )}
       </View>
-      <Text style={styles.meta}>
+
+      <Text style={styles.subInfo}>
         {destination} | {date}
       </Text>
+
       <RatingStars rating={rating} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  container: {
     backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 32,
+    borderRadius: 28,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOpacity: 0.15,
+    shadowRadius: 7,
+    elevation: 4,
   },
-  header: {
+  topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  title: {
+  tripTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1a1a2e',
+    fontWeight: '600',
+    color: '#1b1b30',
     flex: 1,
   },
-  deleteButton: {
-    padding: 4,
+  removeBtn: {
+    padding: 5,
     marginLeft: 8,
   },
-  deleteText: {
-    color: '#ff4444',
+  removeText: {
+    color: '#ff5555',
     fontWeight: 'bold',
     fontSize: 18,
   },
-  meta: {
+  subInfo: {
     fontSize: 14,
-    color: '#888',
+    color: '#777',
     marginTop: 4,
   },
 });
