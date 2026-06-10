@@ -1,11 +1,12 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import RatingStars from './RatingStars';
+import { Colors } from '@/constants/Colors';
 
 import type { TripData } from '@/types/trip';
 
 export interface TripCardProps extends TripData {
-  onRemove?: () => void;
+  onDelete?: () => void;
 }
 
 export default function TripCard({
@@ -13,63 +14,86 @@ export default function TripCard({
   destination,
   date,
   rating,
-  onRemove,
+  onDelete,
 }: TripCardProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.topRow}>
-        <Text style={styles.tripTitle}>{title}</Text>
+    <View style={styles.card}>
+      <View style={styles.header}>
+        <Text style={styles.title}>{title}</Text>
 
-        {onRemove && (
-          <Pressable onPress={onRemove} style={styles.removeBtn}>
-            <Text style={styles.removeText}>✕</Text> 
+        {onDelete && (
+          <Pressable onPress={onDelete} style={styles.deleteButton}>
+            <Ionicons
+              name="trash-outline"
+              size={18}
+              color={Colors.accent}
+            />
           </Pressable>
         )}
       </View>
 
-      <Text style={styles.subInfo}>
+      <Text style={styles.meta}>
         {destination} | {date}
       </Text>
 
-      <RatingStars rating={rating} />
+      <View style={styles.stars}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Ionicons
+            key={star}
+            name={star <= rating ? 'star' : 'star-outline'}
+            size={16}
+            color={Colors.accent}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
+  card: {
+    backgroundColor: Colors.card,
+
     padding: 16,
-    borderRadius: 28,
+    borderRadius: 16,
     marginBottom: 12,
+
     shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 7,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+
     elevation: 4,
   },
-  topRow: {
+
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  tripTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1b1b30',
+
+  title: {
     flex: 1,
-  },
-  removeBtn: {
-    padding: 5,
-    marginLeft: 8,
-  },
-  removeText: {
-    color: '#ff5555',
-    fontWeight: 'bold',
+
+    color: Colors.textPrimary,
     fontSize: 18,
+    fontWeight: 'bold',
   },
-  subInfo: {
-    fontSize: 14,
-    color: '#777',
+
+  meta: {
+    color: Colors.textSecondary,
+    fontSize: 13,
     marginTop: 4,
+  },
+
+  deleteButton: {
+    padding: 6,
+    borderRadius: 12,
+    backgroundColor: 'rgba(233,69,96,0.15)',
+  },
+
+  stars: {
+    flexDirection: 'row',
+    gap: 4,
+    marginTop: 12,
   },
 });

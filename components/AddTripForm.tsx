@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Colors';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -53,24 +54,28 @@ export default function AddTripForm({ onAdd }: AddTripFormProps) {
       <TextInput
         style={styles.input}
         placeholder="Title"
+        placeholderTextColor={Colors.textSecondary}
         value={title}
         onChangeText={setTitle}
       />
       <TextInput
         style={styles.input}
         placeholder="Destination"
+        placeholderTextColor={Colors.textSecondary}
         value={destination}
         onChangeText={setDestination}
       />
       <TextInput
         style={styles.input}
         placeholder="Date (YYYY-MM-DD)"
+        placeholderTextColor={Colors.textSecondary}
         value={date}
         onChangeText={setDate}
       />
       <TextInput
         style={styles.input}
         placeholder="Rating (1-5)"
+        placeholderTextColor={Colors.textSecondary}
         value={rating}
         onChangeText={setRating}
         keyboardType="numeric"
@@ -85,7 +90,7 @@ export default function AddTripForm({ onAdd }: AddTripFormProps) {
 
 const styles = StyleSheet.create({
   form: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.card,
     padding: 16,
     borderRadius: 16,
     marginBottom: 24,
@@ -94,29 +99,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
+
   formTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#1a1a2e',
+    color: Colors.textPrimary,
   },
+
   input: {
+    backgroundColor: Colors.inputBg,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: Colors.inputBorder,
+    color: Colors.textPrimary,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 16,
   },
+
   addButton: {
-    backgroundColor: '#e94560',
+    backgroundColor: Colors.accent,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
   },
+
   addButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
     fontWeight: 'bold',
     fontSize: 16,
   },

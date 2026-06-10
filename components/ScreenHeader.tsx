@@ -1,15 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../constants/Colors';
 
-interface Props {
+import { Colors } from '@/constants/Colors';
+
+interface ScreenHeaderProps {
   tripCount: number;
 }
 
-export default function ScreenHeader({ tripCount }: Props) {
+export default function ScreenHeader({ tripCount }: ScreenHeaderProps) {
   return (
     <View style={styles.header}>
       <View>
-        <Text style={styles.title}>TravelSnap</Text>
+        <Text style={styles.appName}>TravelSnap</Text>
         <Text style={styles.subtitle}>Your travel journal</Text>
       </View>
 
@@ -31,14 +32,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
 
-  title: {
-    color: Colors.textPrimary,
-    fontSize: 26,
+  appName: {
+    fontSize: 28,
     fontWeight: 'bold',
+    color: Colors.textPrimary,
   },
 
   subtitle: {
+    marginTop: 2,
     color: Colors.textSecondary,
+    fontSize: 14,
   },
 
   badge: {
@@ -51,7 +54,7 @@ const styles = StyleSheet.create({
   },
 
   badgeText: {
-    color: 'white',
+    color: Colors.textPrimary,
     fontWeight: 'bold',
   },
 });

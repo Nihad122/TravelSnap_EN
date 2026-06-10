@@ -1,70 +1,63 @@
-import { useState } from 'react';
-import { ScrollView, StatusBar, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import AddTripForm from '@/components/AddTripForm';
 import EmptyState from '@/components/EmptyState';
 import ScreenHeader from '@/components/ScreenHeader';
 import TripCard from '@/components/TripCard';
-
 import { Colors } from '@/constants/Colors';
+import { useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import type { Trip, TripData } from '@/types/trip';
 
 export default function HomeScreen() {
-  const [tripList, setTripList] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
 
-  const addTrip = (tripData: TripData) => {
-    const newEntry: Trip = { id: Date.now().toString(), ...tripData };
-    setTripList([newEntry, ...tripList]);
+  const handleAddTrip = (data: TripData): void => {
+    const newTrip: Trip = {
+      id: Date.now().toString(),
+      ...data,
+    };
+
+    setTrips([newTrip, ...trips]);
   };
 
-  const removeTrip = (id: string) => {
-    setTripList(tripList.filter((trip) => trip.id !== id));
+  const handleDeleteTrip = (id: string): void => {
+    setTrips(trips.filter((trip) => trip.id !== id));
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+    >
+      <ScreenHeader tripCount={trips.length} />
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <ScreenHeader tripCount={tripList.length} />
+      <AddTripForm onAdd={handleAddTrip} />
 
-        <AddTripForm onAdd={addTrip} />
-
-        {tripList.length === 0 ? (
-          <EmptyState />
-        ) : (
-          tripList.map((trip) => (
-            <TripCard
-              key={trip.id}
-              title={trip.title}
-              destination={trip.destination}
-              date={trip.date}
-              rating={trip.rating}
-              onRemove={() => removeTrip(trip.id)}
-            />
-          ))
-        )}
-      </ScrollView>
-    </SafeAreaView>
+      {trips.length === 0 ? (
+        <EmptyState />
+      ) : (
+        trips.map((trip) => (
+          <TripCard
+            key={trip.id}
+            title={trip.title}
+            destination={trip.destination}
+            date={trip.date}
+            rating={trip.rating}
+            onDelete={() => handleDeleteTrip(trip.id)}
+          />
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: Colors.background,
   },
-  scroll: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  contentContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+
+  content: {
+    padding: 16,
   },
 });
