@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
 import type { TripData } from '@/types/trip';
@@ -7,27 +8,47 @@ import type { TripData } from '@/types/trip';
 import RatingStars from './RatingStars';
 
 interface TripCardProps extends TripData {
+  id: string;
   onDelete?: () => void;
 }
 
-export default function TripCard({ title, destination, date, rating, onDelete }: TripCardProps) {
-  return (
-    <View style={styles.card}>
+export default function TripCard({
+  id,
+  title,
+  destination,
+  date,
+  rating,
+  onDelete,
+}: TripCardProps) {
+return (
+  <Link
+    href={{
+      pathname: '/trip/[id]',
+      params: { id },
+    }}
+    asChild
+  >
+    <Pressable style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
+
         {onDelete && (
           <Pressable onPress={onDelete} style={styles.deleteButton}>
             <Ionicons name="close" size={16} color={Colors.accent} />
           </Pressable>
         )}
       </View>
+
       <Text style={styles.meta}>
         {destination} | {date}
       </Text>
+
       <View style={styles.separator} />
+
       <RatingStars rating={rating} />
-    </View>
-  );
+    </Pressable>
+  </Link>
+);
 }
 
 const styles = StyleSheet.create({
