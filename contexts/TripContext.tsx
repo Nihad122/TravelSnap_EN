@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 import type { Trip, TripData } from '@/types/trip';
 
@@ -7,6 +7,21 @@ interface TripContextValue {
   trips: Trip[];
   addTrip: (data: TripData) => void;
   deleteTrip: (id: string) => void;
+
+  addGalleryImage: (
+    tripId: string,
+    uri: string
+  ) => void;
+
+  removeGalleryImage: (
+    tripId: string,
+    uri: string
+  ) => void;
+
+  setMainPhoto: (
+    tripId: string,
+    uri: string
+  ) => void;
 }
 
 const TripContext = createContext<TripContextValue | null>(null);
@@ -27,8 +42,62 @@ export function TripProvider({ children }: TripProviderProps) {
     setTrips((current) => current.filter((trip) => trip.id !== id));
   };
 
+  const addGalleryImage = (
+    tripId: string,
+    uri: string
+  ): void => {
+    setTrips((current) =>
+      current.map((trip) =>
+        trip.id === tripId
+          ? {
+              ...trip,
+              galleryUris: [
+                ...(trip.galleryUris ?? []),
+                uri,
+              ],
+            }
+          : trip
+      )
+    );
+  };
+
+  const removeGalleryImage = (
+    tripId: string,
+    uri: string
+  ): void => {
+    setTrips((current) =>
+      current.map((trip) =>
+        trip.id === tripId
+          ? {
+              ...trip,
+              galleryUris:
+                trip.galleryUris?.filter(
+                  (img) => img !== uri
+                ) ?? [],
+            }
+          : trip
+      )
+    );
+  };
+
+  const setMainPhoto = (
+    tripId: string,
+    uri: string
+  ): void => {
+    setTrips((current) =>
+      current.map((trip) =>
+        trip.id === tripId
+          ? {
+              ...trip,
+              imageUri: uri,
+            }
+          : trip
+      )
+    );
+  };
+
   return (
-    <TripContext.Provider value={{ trips, addTrip, deleteTrip }}>
+    <TripContext.Provider value={{ trips, addTrip, deleteTrip, addGalleryImage, removeGalleryImage, setMainPhoto }}>
       {children}
     </TripContext.Provider>
   );

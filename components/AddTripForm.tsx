@@ -1,5 +1,8 @@
+import { saveImageToTrip } from '@/utils/imageStorage';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Colors } from '@/constants/Colors';
 import type { TripData } from '@/types/trip';
@@ -26,6 +29,77 @@ export default function AddTripForm({ onAdd }: AddTripFormProps) {
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
   const [rating, setRating] = useState('');
+  const [imageUri, setImageUri] = useState<string>();
+
+  const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    allowsEditing: true,
+    aspect: [16, 9],
+    quality: 0.8,
+  });
+
+  if (result.canceled) return;
+
+  const tempUri = result.assets[0].uri;
+
+  const savedUri = await saveImageToTrip(
+    tempUri,
+    Date.now().toString()
+  );
+
+  setImageUri(savedUri);
+};
+
+const takePhoto = async () => {
+  const permission =
+    await ImagePicker.requestCameraPermissionsAsync();
+
+  if (permission.status !== 'granted') {
+    Alert.alert(
+      'Permission Required',
+      'Camera permission is needed.'
+    );
+    return;
+  }
+
+  const result = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+    aspect: [16, 9],
+    quality: 0.8,
+  });
+
+  if (result.canceled) return;
+
+  const tempUri = result.assets[0].uri;
+
+  const savedUri = await saveImageToTrip(
+    tempUri,
+    Date.now().toString()
+  );
+
+  setImageUri(savedUri);
+};
+
+const handleAddPhoto = () => {
+  Alert.alert(
+    'Add Photo',
+    'Choose source',
+    [
+      {
+        text: 'Gallery',
+        onPress: pickImage,
+      },
+      {
+        text: 'Camera',
+        onPress: takePhoto,
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ]
+  );
+};
 
   const handleSubmit = (): void => {
     const error = validate(title, destination, date, rating);
@@ -39,6 +113,8 @@ export default function AddTripForm({ onAdd }: AddTripFormProps) {
       destination: destination.trim(),
       date: date.trim(),
       rating: Number(rating),
+      imageUri: imageUri,
+      galleryUris: [],
     });
 
     setTitle('');
@@ -80,6 +156,38 @@ export default function AddTripForm({ onAdd }: AddTripFormProps) {
         onChangeText={setRating}
         keyboardType="numeric"
       />
+      {imageUri ? (
+  <>
+    <Image
+      source={{ uri: imageUri }}
+      style={styles.preview}
+    />
+
+    <Pressable
+      style={styles.changePhotoButton}
+      onPress={handleAddPhoto}
+    >
+      <Text style={styles.changePhotoText}>
+        Change Photo
+      </Text>
+    </Pressable>
+  </>
+) : (
+  <Pressable
+    style={styles.photoPicker}
+    onPress={handleAddPhoto}
+  >
+    <Ionicons
+      name="camera-outline"
+      size={32}
+      color={Colors.accent}
+    />
+
+    <Text style={styles.photoPickerText}>
+      Add a photo
+    </Text>
+  </Pressable>
+)}
 
       <Pressable style={styles.addButton} onPress={handleSubmit}>
         <Text style={styles.addButtonText}>Add Trip</Text>
@@ -127,4 +235,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  preview: {
+  width: '100%',
+  height: 200,
+  borderRadius: 8,
+  marginBottom: 12,
+},
+
+photoPicker: {
+  height: 120,
+  borderWidth: 2,
+  borderStyle: 'dashed',
+  borderColor: Colors.accent,
+  borderRadius: 8,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+
+photoPickerText: {
+  color: Colors.textPrimary,
+  marginTop: 8,
+},
+
+changePhotoButton: {
+  alignItems: 'center',
+  marginBottom: 12,
+},
+
+changePhotoText: {
+  color: Colors.accent,
+  fontWeight: '600',
+},
 });
